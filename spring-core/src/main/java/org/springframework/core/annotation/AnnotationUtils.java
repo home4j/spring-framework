@@ -454,7 +454,7 @@ public abstract class AnnotationUtils {
 	 * or if it should be looked up via @{@link java.lang.annotation.Repeatable}
 	 * when running on Java 8 or higher
 	 * @param declaredMode {@code true} if only declared annotations (i.e.,
-	 * directly or indirectly present) should be considered.
+	 * directly or indirectly present) should be considered
 	 * @return the annotations found or an empty set; never {@code null}
 	 * @since 4.2
 	 * @see org.springframework.core.BridgeMethodResolver#findBridgedMethod
@@ -1277,10 +1277,8 @@ public abstract class AnnotationUtils {
 		DefaultAnnotationAttributeExtractor attributeExtractor =
 				new DefaultAnnotationAttributeExtractor(annotation, annotatedElement);
 		InvocationHandler handler = new SynthesizedAnnotationInvocationHandler(attributeExtractor);
-		A synthesizedAnnotation = (A) Proxy.newProxyInstance(ClassUtils.getDefaultClassLoader(),
+		return (A) Proxy.newProxyInstance(ClassUtils.getDefaultClassLoader(),
 				new Class<?>[] {(Class<A>) annotationType, SynthesizedAnnotation.class}, handler);
-
-		return synthesizedAnnotation;
 	}
 
 	/**
@@ -1325,10 +1323,8 @@ public abstract class AnnotationUtils {
 		MapAnnotationAttributeExtractor attributeExtractor =
 				new MapAnnotationAttributeExtractor(attributes, annotationType, annotatedElement);
 		InvocationHandler handler = new SynthesizedAnnotationInvocationHandler(attributeExtractor);
-		A synthesizedAnnotation = (A) Proxy.newProxyInstance(ClassUtils.getDefaultClassLoader(),
+		return (A) Proxy.newProxyInstance(ClassUtils.getDefaultClassLoader(),
 				new Class<?>[] {annotationType, SynthesizedAnnotation.class}, handler);
-
-		return synthesizedAnnotation;
 	}
 
 	/**
@@ -1516,7 +1512,7 @@ public abstract class AnnotationUtils {
 	static List<String> getAttributeAliasNames(Method attribute) {
 		Assert.notNull(attribute, "attribute must not be null");
 		AliasDescriptor descriptor = AliasDescriptor.from(attribute);
-		return (descriptor == null ? Collections.<String> emptyList() : descriptor.getAttributeAliasNames());
+		return (descriptor != null ? descriptor.getAttributeAliasNames() : Collections.<String> emptyList());
 	}
 
 	/**
