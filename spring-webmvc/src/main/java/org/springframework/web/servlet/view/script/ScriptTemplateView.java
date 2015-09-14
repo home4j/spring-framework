@@ -40,7 +40,7 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.Assert;
-import org.springframework.util.StreamUtils;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.view.AbstractUrlBasedView;
 
@@ -323,14 +323,15 @@ public class ScriptTemplateView extends AbstractUrlBasedView {
 		try {
 			ScriptEngine engine = getEngine();
 			Invocable invocable = (Invocable) engine;
-			String template = getTemplate(getUrl());
+			String url = getUrl();
+			String template = getTemplate(url);
 			Object html;
 			if (this.renderObject != null) {
 				Object thiz = engine.eval(this.renderObject);
-				html = invocable.invokeMethod(thiz, this.renderFunction, template, model);
+				html = invocable.invokeMethod(thiz, this.renderFunction, template, model, url);
 			}
 			else {
-				html = invocable.invokeFunction(this.renderFunction, template, model);
+				html = invocable.invokeFunction(this.renderFunction, template, model, url);
 			}
 			response.getWriter().write(String.valueOf(html));
 		}
@@ -341,7 +342,8 @@ public class ScriptTemplateView extends AbstractUrlBasedView {
 
 	protected String getTemplate(String path) throws IOException {
 		Resource resource = this.resourceLoader.getResource(path);
-		return StreamUtils.copyToString(resource.getInputStream(), this.charset);
+		InputStreamReader reader = new InputStreamReader(resource.getInputStream(), this.charset);
+		return FileCopyUtils.copyToString(reader);
 	}
 
 }
