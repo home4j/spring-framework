@@ -36,6 +36,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.cfg.HandlerInstantiator;
+import com.fasterxml.jackson.databind.jsontype.TypeResolverBuilder;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 
@@ -216,11 +217,40 @@ public class Jackson2ObjectMapperFactoryBean implements FactoryBean<ObjectMapper
 	}
 
 	/**
+	 * Specify a {@link TypeResolverBuilder} to use for Jackson's default typing.
+	 * @since 4.2.2
+	 */
+	public void setDefaultTyping(TypeResolverBuilder<?> typeResolverBuilder) {
+		this.builder.defaultTyping(typeResolverBuilder);
+	}
+
+	/**
 	 * Set a custom inclusion strategy for serialization.
 	 * @see com.fasterxml.jackson.annotation.JsonInclude.Include
 	 */
 	public void setSerializationInclusion(JsonInclude.Include serializationInclusion) {
 		this.builder.serializationInclusion(serializationInclusion);
+	}
+
+	/**
+	 * Set the global filters to use in order to support {@link JsonFilter @JsonFilter} annotated POJO.
+	 * @since 4.2
+	 * @see Jackson2ObjectMapperBuilder#filters(FilterProvider)
+	 */
+	public void setFilters(FilterProvider filters) {
+		this.builder.filters(filters);
+	}
+
+	/**
+	 * Add mix-in annotations to use for augmenting specified class or interface.
+	 * @param mixIns Map of entries with target classes (or interface) whose annotations
+	 * to effectively override as key and mix-in classes (or interface) whose
+	 * annotations are to be "added" to target's annotations as value.
+	 * @since 4.1.2
+	 * @see com.fasterxml.jackson.databind.ObjectMapper#addMixInAnnotations(Class, Class)
+	 */
+	public void setMixIns(Map<Class<?>, Class<?>> mixIns) {
+		this.builder.mixIns(mixIns);
 	}
 
 	/**
@@ -249,18 +279,6 @@ public class Jackson2ObjectMapperFactoryBean implements FactoryBean<ObjectMapper
 	}
 
 	/**
-	 * Add mix-in annotations to use for augmenting specified class or interface.
-	 * @param mixIns Map of entries with target classes (or interface) whose annotations
-	 * to effectively override as key and mix-in classes (or interface) whose
-	 * annotations are to be "added" to target's annotations as value.
-	 * @since 4.1.2
-	 * @see com.fasterxml.jackson.databind.ObjectMapper#addMixInAnnotations(Class, Class)
-	 */
-	public void setMixIns(Map<Class<?>, Class<?>> mixIns) {
-		this.builder.mixIns(mixIns);
-	}
-
-	/**
 	 * Shortcut for {@link MapperFeature#AUTO_DETECT_FIELDS} option.
 	 */
 	public void setAutoDetectFields(boolean autoDetectFields) {
@@ -269,7 +287,8 @@ public class Jackson2ObjectMapperFactoryBean implements FactoryBean<ObjectMapper
 
 	/**
 	 * Shortcut for {@link MapperFeature#AUTO_DETECT_SETTERS}/
-	 * {@link MapperFeature#AUTO_DETECT_GETTERS} option.
+	 * {@link MapperFeature#AUTO_DETECT_GETTERS}/{@link MapperFeature#AUTO_DETECT_IS_GETTERS}
+	 * options.
 	 */
 	public void setAutoDetectGettersSetters(boolean autoDetectGettersSetters) {
 		this.builder.autoDetectGettersSetters(autoDetectGettersSetters);
@@ -372,6 +391,11 @@ public class Jackson2ObjectMapperFactoryBean implements FactoryBean<ObjectMapper
 		this.builder.findModulesViaServiceLoader(findModules);
 	}
 
+	@Override
+	public void setBeanClassLoader(ClassLoader beanClassLoader) {
+		this.builder.moduleClassLoader(beanClassLoader);
+	}
+
 	/**
 	 * Customize the construction of Jackson handlers ({@link JsonSerializer}, {@link JsonDeserializer},
 	 * {@link KeyDeserializer}, {@code TypeResolverBuilder} and {@code TypeIdResolver}).
@@ -380,31 +404,6 @@ public class Jackson2ObjectMapperFactoryBean implements FactoryBean<ObjectMapper
 	 */
 	public void setHandlerInstantiator(HandlerInstantiator handlerInstantiator) {
 		this.builder.handlerInstantiator(handlerInstantiator);
-	}
-
-	/**
-	 * Set the global filters to use in order to support {@link JsonFilter @JsonFilter} annotated POJO.
-	 * @since 4.2
-	 * @see Jackson2ObjectMapperBuilder#filters(FilterProvider)
-	 */
-	public void setFilters(FilterProvider filters) {
-		this.builder.filters(filters);
-	}
-
-	@Override
-	public void setBeanClassLoader(ClassLoader beanClassLoader) {
-		this.builder.moduleClassLoader(beanClassLoader);
-	}
-
-
-	@Override
-	public void afterPropertiesSet() {
-		if (this.objectMapper != null) {
-			this.builder.configure(this.objectMapper);
-		}
-		else {
-			this.objectMapper = this.builder.build();
-		}
 	}
 
 	/**
@@ -417,6 +416,17 @@ public class Jackson2ObjectMapperFactoryBean implements FactoryBean<ObjectMapper
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) {
 		this.builder.applicationContext(applicationContext);
+	}
+
+
+	@Override
+	public void afterPropertiesSet() {
+		if (this.objectMapper != null) {
+			this.builder.configure(this.objectMapper);
+		}
+		else {
+			this.objectMapper = this.builder.build();
+		}
 	}
 
 	/**
