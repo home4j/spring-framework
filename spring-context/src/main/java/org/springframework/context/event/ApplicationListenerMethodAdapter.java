@@ -174,6 +174,11 @@ public class ApplicationListenerMethodAdapter implements GenericApplicationListe
 		}
 	}
 
+	/**
+	 * JOSHUA: 在此把事件处理的返回值作为事件传递下去，变成事件链，简化事件调用。
+	 * 
+	 * @see EventListener
+	 */
 	protected void handleResult(Object result) {
 		if (result.getClass().isArray()) {
 			Object[] events = ObjectUtils.toObjectArray(result);
@@ -199,6 +204,9 @@ public class ApplicationListenerMethodAdapter implements GenericApplicationListe
 		}
 	}
 
+	/**
+	 * JOSHUA: 在此根据注解{@code EventListener}中的条件判断是否需要执行此事件，条件的判断通过Spring EL表达式来处理
+	 */
 	private boolean shouldHandle(ApplicationEvent event, Object[] args) {
 		if (args == null) {
 			return false;

@@ -723,6 +723,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	}
 
 	/**
+	 * JOSHUA: 如果没有注册对应的"applicationEventMulticaster"，则在此处生成一个默认的
+	 * {@code SimpleApplicationEventMulticaster}实例
+	 */
+	/**
 	 * Initialize the ApplicationEventMulticaster.
 	 * Uses SimpleApplicationEventMulticaster if none defined in the context.
 	 * @see org.springframework.context.event.SimpleApplicationEventMulticaster
