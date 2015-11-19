@@ -44,6 +44,10 @@ import org.springframework.core.type.filter.TypeFilter;
  * {@code @ComponentScan} level would be ignored.
  *
  * <p>See {@link Configuration @Configuration}'s Javadoc for usage examples.
+ * 
+ * <p>JOSHUA: 可以参看{@link ComponentScanAnnotationParser}和
+ * {@link ComponentScanBeanDefinitionParser}，两者分别用于在Annotation和XML的配置中解析基于注解的Bean配置，且都使用
+ * {@link ClassPathBeanDefinitionScanner}进行配置扫描。
  *
  * @author Chris Beams
  * @author Juergen Hoeller

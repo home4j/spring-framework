@@ -366,6 +366,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			applicationEvent = (ApplicationEvent) event;
 		}
 		else {
+			/**
+			 * JOSHUA: 对非{@code ApplicationEvent}子类的事件进行封装
+			 */
 			applicationEvent = new PayloadApplicationEvent<Object>(this, event);
 			if (eventType == null) {
 				eventType = ResolvableType.forClassWithGenerics(PayloadApplicationEvent.class, event.getClass());

@@ -31,6 +31,9 @@ import java.lang.annotation.Target;
  * a component as well, typically a special kind of component:
  * e.g. the {@link Repository @Repository} annotation or AspectJ's
  * {@link org.aspectj.lang.annotation.Aspect @Aspect} annotation.
+ * 
+ * <p>{@code Component}可以当作注解的注解来使用，以实现类似注解继承的逻辑，可参看{@code Controller}、{@code Repository}和
+ * {@code Service}
  *
  * @author Mark Fisher
  * @since 2.5

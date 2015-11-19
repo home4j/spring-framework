@@ -24,6 +24,9 @@ import org.springframework.util.Assert;
  * An {@link ApplicationEvent} that carries an arbitrary payload.
  *
  * <p>Mainly intended for internal use within the framework.
+ * 
+ * <p>JOSHUA: 个性化事件的封装类，Spring 4.2之前，事件只能是{@code ApplicationEvent}的子类，现在可以直接使用，在发布时
+ * {@code AbstractApplicationContext}会自动的用此类封装。
  *
  * @author Stephane Nicoll
  * @since 4.2
