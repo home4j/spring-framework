@@ -1,0 +1,4 @@
+JOSHUA:
+
+1. BeanPostProcessor/BeanFactoryPostProcessor/SmartInitializingSingleton
+	这几者的异同

@@ -539,6 +539,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				// Check for listener beans and register them.
 				registerListeners();
 
+				/*
+				 * JOSHUA: 事件响应Bean的初始化在其中完成
+				 */
 				// Instantiate all remaining (non-lazy-init) singletons.
 				finishBeanFactoryInitialization(beanFactory);
 
@@ -632,6 +635,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// Configure the bean factory with context callbacks.
 		beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
+		/*
+		 * JOSHUA: 下列几个依赖都在{@code
+		 * ApplicationContextAwareProcessor}中处理，此处忽略，个人估计是因为一个ApplicationContext中可能存在多个实例
+		 * ，Autowired可能会出错。
+		 */
 		beanFactory.ignoreDependencyInterface(ResourceLoaderAware.class);
 		beanFactory.ignoreDependencyInterface(ApplicationEventPublisherAware.class);
 		beanFactory.ignoreDependencyInterface(MessageSourceAware.class);

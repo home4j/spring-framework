@@ -97,6 +97,9 @@ class ApplicationContextAwareProcessor implements BeanPostProcessor {
 		return bean;
 	}
 
+	/**
+	 * 给实现了特殊接口的Bean设置服务实例，这么做可能是避免ApplicationContext存在多个业务实例导致注册失败。
+	 */
 	private void invokeAwareInterfaces(Object bean) {
 		if (bean instanceof Aware) {
 			if (bean instanceof EnvironmentAware) {
