@@ -98,7 +98,7 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 	 * {@code ApplicationContext} implementations are {@code EnvironmentCapable}, while
 	 * normal {@code BeanFactory} implementations are not.
 	 * 
-	 * <p>JOSHUA: 是一个关键的参数，会添加Spring默认注解的扫描配置，相关逻辑可以参考
+	 * <p>JOSHUA: useDefaultFilters是一个关键的参数，会添加Spring默认注解的扫描配置，相关逻辑可以参考
 	 * {@link ClassPathScanningCandidateComponentProvider#registerDefaultFilters()}
 	 * 
 	 * @param registry the {@code BeanFactory} to load bean definitions into, in the form
