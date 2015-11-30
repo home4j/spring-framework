@@ -72,10 +72,19 @@ public class EventListenerMethodProcessor implements SmartInitializingSingleton,
 	@Override
 	public void afterSingletonsInstantiated() {
 		List<EventListenerFactory> factories = getEventListenerFactories();
-		String[] allBeanNames = this.applicationContext.getBeanNamesForType(Object.class);
-		for (String beanName : allBeanNames) {
+		String[] beanNames = this.applicationContext.getBeanNamesForType(Object.class);
+		for (String beanName : beanNames) {
 			if (!ScopedProxyUtils.isScopedTarget(beanName)) {
-				Class<?> type = AutoProxyUtils.determineTargetClass(this.applicationContext.getBeanFactory(), beanName);
+				Class<?> type = null;
+				try {
+					type = AutoProxyUtils.determineTargetClass(this.applicationContext.getBeanFactory(), beanName);
+				}
+				catch (Throwable ex) {
+					// An unresolvable bean type, probably from a lazy bean - let's ignore it.
+					if (logger.isDebugEnabled()) {
+						logger.debug("Could not resolve target class for bean with name '" + beanName + "'", ex);
+					}
+				}
 				if (type != null) {
 					if (ScopedObject.class.isAssignableFrom(type)) {
 						try {
@@ -107,8 +116,7 @@ public class EventListenerMethodProcessor implements SmartInitializingSingleton,
 	 * {@link EventListener} annotated methods.
 	 */
 	protected List<EventListenerFactory> getEventListenerFactories() {
-		Map<String, EventListenerFactory> beans =
-				this.applicationContext.getBeansOfType(EventListenerFactory.class);
+		Map<String, EventListenerFactory> beans = this.applicationContext.getBeansOfType(EventListenerFactory.class);
 		List<EventListenerFactory> allFactories = new ArrayList<EventListenerFactory>(beans.values());
 		AnnotationAwareOrderComparator.sort(allFactories);
 		return allFactories;

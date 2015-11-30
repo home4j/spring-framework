@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 the original author or authors.
+ * Copyright 2002-2014 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,6 @@
 
 package org.springframework.cache.config;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import org.springframework.cache.interceptor.CacheInterceptor;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
@@ -27,18 +23,12 @@ import org.springframework.context.support.GenericXmlApplicationContext;
  * @author Costin Leau
  * @author Chris Beams
  */
-public class CacheAdviceNamespaceTests extends AbstractCacheAnnotationTests {
+public class AnnotationDrivenCacheConfigTests extends AbstractCacheAnnotationTests {
 
 	@Override
 	protected ConfigurableApplicationContext getApplicationContext() {
 		return new GenericXmlApplicationContext(
-				"/org/springframework/cache/config/cache-advice.xml");
-	}
-
-	@Test
-	public void testKeyStrategy() throws Exception {
-		CacheInterceptor bean = ctx.getBean("cacheAdviceClass", CacheInterceptor.class);
-		Assert.assertSame(ctx.getBean("keyGenerator"), bean.getKeyGenerator());
+				"/org/springframework/cache/config/annotationDrivenCacheConfig.xml");
 	}
 
 }

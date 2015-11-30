@@ -14,28 +14,22 @@
  * limitations under the License.
  */
 
-package org.springframework.jmx.export.annotation;
+package org.springframework.cache.jcache;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import javax.cache.Caching;
+import javax.cache.spi.CachingProvider;
 
 /**
- * Type-level annotation that indicates JMX notifications emitted by a bean,
- * containing multiple {@link ManagedNotification ManagedNotifications}
+ * Just here to be run against EHCache 3, whereas the original JCacheEhCacheAnnotationTests
+ * runs against EhCache 2.x with the EhCache-JCache add-on.
  *
- * @author Rob Harrop
- * @since 2.0
+ * @author Juergen Hoeller
  */
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@Inherited
-@Documented
-public @interface ManagedNotifications {
+public class JCacheEhCache3AnnotationTests extends JCacheEhCacheAnnotationTests {
 
-	ManagedNotification[] value();
+	@Override
+	protected CachingProvider getCachingProvider() {
+		return Caching.getCachingProvider("org.ehcache.jsr107.EhcacheCachingProvider");
+	}
 
 }
