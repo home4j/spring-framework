@@ -107,6 +107,7 @@ public class SpringCacheAnnotationParser implements CacheAnnotationParser, Seria
 		op.setKeyGenerator(cacheable.keyGenerator());
 		op.setCacheManager(cacheable.cacheManager());
 		op.setCacheResolver(cacheable.cacheResolver());
+		op.setSync(cacheable.sync());
 		op.setName(ae.toString());
 
 		defaultConfig.applyDefault(op);
@@ -195,7 +196,7 @@ public class SpringCacheAnnotationParser implements CacheAnnotationParser, Seria
 	}
 
 	private <A extends Annotation> Collection<A> getAnnotations(AnnotatedElement ae, Class<A> annotationType) {
-		Collection<A> anns = new ArrayList<A>(2);
+		Collection<A> anns = new ArrayList<A>(1);
 
 		// look at raw annotation
 		A ann = ae.getAnnotation(annotationType);
@@ -211,7 +212,7 @@ public class SpringCacheAnnotationParser implements CacheAnnotationParser, Seria
 			}
 		}
 
-		return (anns.isEmpty() ? null : anns);
+		return (!anns.isEmpty() ? anns : null);
 	}
 
 	/**

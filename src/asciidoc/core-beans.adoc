@@ -4168,7 +4168,40 @@ references and values even when you use the class outside of a container.
 [[beans-autowired-annotation]]
 === @Autowired
 
-As expected, you can apply the `@Autowired` annotation to "traditional" setter methods:
+[NOTE]
+====
+JSR 330's `@Inject` annotation can be used in place of Spring's `@Autowired` annotation
+in the examples below. See <<beans-standard-annotations,here>> for more details.
+====
+
+You can apply the `@Autowired` annotation to constructors:
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	public class MovieRecommender {
+
+		private final CustomerPreferenceDao customerPreferenceDao;
+
+		@Autowired
+		public MovieRecommender(CustomerPreferenceDao customerPreferenceDao) {
+			this.customerPreferenceDao = customerPreferenceDao;
+		}
+
+		// ...
+
+	}
+----
+
+[NOTE]
+====
+As of Spring Framework 4.3, the `@Autowired` constructor is no longer necessary if the
+target bean only defines one constructor. If several constructors are available, at
+least one must be annotated to teach the container which one it has to use.
+====
+
+As expected, you can also apply the `@Autowired` annotation to "traditional" setter
+methods:
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -4186,12 +4219,6 @@ As expected, you can apply the `@Autowired` annotation to "traditional" setter m
 
 	}
 ----
-
-[NOTE]
-====
-JSR 330's `@Inject` annotation can be used in place of Spring's `@Autowired` annotation
-in the examples below. See <<beans-standard-annotations,here>> for more details.
-====
 
 You can also apply the annotation to methods with arbitrary names and/or multiple
 arguments:
@@ -4217,17 +4244,17 @@ arguments:
 	}
 ----
 
-You can apply `@Autowired` to constructors and fields:
+You can apply `@Autowired` to fields as well and even mix it with constructors:
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
 	public class MovieRecommender {
 
+		private final CustomerPreferenceDao customerPreferenceDao;
+
 		@Autowired
 		private MovieCatalog movieCatalog;
-
-		private CustomerPreferenceDao customerPreferenceDao;
 
 		@Autowired
 		public MovieRecommender(CustomerPreferenceDao customerPreferenceDao) {
@@ -6761,8 +6788,12 @@ work on the configuration class itself since it is being created as a bean insta
 	@Configuration
 	public class RepositoryConfig {
 
+		private final DataSource dataSource;
+
 		@Autowired
-		private DataSource dataSource;
+		public RepositoryConfig(DataSource dataSource) {
+			this.dataSource = dataSource;
+		}
 
 		@Bean
 		public AccountRepository accountRepository() {
@@ -6789,6 +6820,14 @@ work on the configuration class itself since it is being created as a bean insta
 		transferService.transfer(100.00, "A123", "C456");
 	}
 ----
+
+[TIP]
+====
+Constructor injection in `@Configuration` classes is only supported as of Spring
+Framework 4.3. Note also that there is no need to specify `@Autowired` if the target
+bean defines only one constructor; in the example above, `@Autowired` is not necessary
+on the `RepositoryConfig` constructor.
+====
 
 .[[beans-java-injecting-imported-beans-fq]]Fully-qualifying imported beans for ease of navigation
 --
@@ -8138,10 +8177,10 @@ available to the context so one can use them for conditional event processing:
 
 | __argument name__
 | evaluation context
-| Name of any of the method argument. If for some reason the names are not available
-  (ex: no debug information), the argument names are also available under the `a<#arg>`
+| Name of any of the method arguments. If for some reason the names are not available
+  (e.g. no debug information), the argument names are also available under the `#a<#arg>`
   where __#arg__ stands for the argument index (starting from 0).
-| `iban` or `a0` (one can also use `p0` or `p<#arg>` notation as an alias).
+| `#iban` or `#a0` (one can also use `#p0` or `#p<#arg>` notation as an alias).
 |===
 
 Note that `#root.event` allows you to access to the underlying event, even if your method
