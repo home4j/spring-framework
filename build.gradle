@@ -1432,3 +1432,8 @@ def qualifyVersionIfNecessary(version) {
 	}
 	return version
 }
+
+// 设置本地编译时选用的编码，避免“编码GBK的不可映射字符”异常
+tasks.withType(JavaCompile) {  
+	options.encoding = "UTF-8"  
+} 
