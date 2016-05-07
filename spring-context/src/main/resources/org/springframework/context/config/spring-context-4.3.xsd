@@ -152,6 +152,14 @@
 				]]></xsd:documentation>
 						</xsd:annotation>
 					</xsd:attribute>
+					<xsd:attribute name="trim-values">
+						<xsd:annotation>
+							<xsd:documentation><![CDATA[
+	Whether to trim resolved values before applying them, removing superfluous
+	whitespace (in particular tab characters) from the beginning and end.
+				]]></xsd:documentation>
+						</xsd:annotation>
+					</xsd:attribute>
 					<xsd:attribute name="null-value">
 						<xsd:annotation>
 							<xsd:documentation><![CDATA[
@@ -235,6 +243,9 @@
 					<xsd:annotation>
 						<xsd:documentation><![CDATA[
 	Controls which eligible types to include for component scanning.
+	Note that these filters will be applied in addition to the default filters, if specified.
+	Any type under the specified base packages which matches a given filter will be included,
+	even if it does not match the default filters (i.e. is not annotated with @Component).
 							]]></xsd:documentation>
 					</xsd:annotation>
 				</xsd:element>

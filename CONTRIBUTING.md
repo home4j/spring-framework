@@ -6,6 +6,10 @@ to expect from the Spring team when evaluating your submission._
 _Please refer back to this document as a checklist before issuing any pull
 request; this will save time for everyone!_
 
+## Code of Conduct
+This project adheres to the Contributor Covenant [code of conduct](CODE_OF_CONDUCT.adoc).
+By participating, you  are expected to uphold this code. Please report unacceptable behavior to spring-code-of-conduct@pivotal.io.
+
 ## Take Your First Steps
 
 ### Understand the basics
@@ -28,14 +32,6 @@ in our [JIRA issue tracker][] to see if you can find something similar. If you
 do not find something similar, please create a new JIRA issue before submitting
 a pull request unless the change is truly trivial -- for example: typo fixes,
 removing compiler warnings, etc.
-
-### Discuss non-trivial contribution ideas with committers
-
-If you're considering anything more than correcting a typo or fixing a minor
-bug, please discuss it on the [spring-framework-contrib][] mailing list before
-submitting a pull request. We're happy to provide guidance, but please spend an
-hour or two researching the subject on your own, including searching the mailing
-list for prior discussions.
 
 ### Sign the Individual Contributor License Agreement (ICLA)
 

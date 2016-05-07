@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 the original author or authors.
+ * Copyright 2002-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,9 +88,12 @@ public class ServletServerHttpRequest implements ServerHttpRequest {
 	@Override
 	public URI getURI() {
 		try {
-			return new URI(this.servletRequest.getScheme(), null, this.servletRequest.getServerName(),
-					this.servletRequest.getServerPort(), this.servletRequest.getRequestURI(),
-					this.servletRequest.getQueryString(), null);
+			StringBuffer url = this.servletRequest.getRequestURL();
+			String query = this.servletRequest.getQueryString();
+			if (StringUtils.hasText(query)) {
+				url.append('?').append(query);
+			}
+			return new URI(url.toString());
 		}
 		catch (URISyntaxException ex) {
 			throw new IllegalStateException("Could not get HttpServletRequest URI: " + ex.getMessage(), ex);
@@ -118,7 +121,7 @@ public class ServletServerHttpRequest implements ServerHttpRequest {
 					this.headers.setContentType(contentType);
 				}
 			}
-			if (contentType != null && contentType.getCharSet() == null) {
+			if (contentType != null && contentType.getCharset() == null) {
 				String requestEncoding = this.servletRequest.getCharacterEncoding();
 				if (StringUtils.hasLength(requestEncoding)) {
 					Charset charSet = Charset.forName(requestEncoding);
@@ -129,7 +132,7 @@ public class ServletServerHttpRequest implements ServerHttpRequest {
 					this.headers.setContentType(newContentType);
 				}
 			}
-			if (this.headers.getContentLength() == -1) {
+			if (this.headers.getContentLength() < 0) {
 				int requestContentLength = this.servletRequest.getContentLength();
 				if (requestContentLength != -1) {
 					this.headers.setContentLength(requestContentLength);

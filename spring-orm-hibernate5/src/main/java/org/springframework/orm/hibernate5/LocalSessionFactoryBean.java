@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 the original author or authors.
+ * Copyright 2002-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.boot.registry.BootstrapServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
+import org.hibernate.engine.jdbc.connections.spi.MultiTenantConnectionProvider;
 
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
@@ -84,6 +85,8 @@ public class LocalSessionFactoryBean extends HibernateExceptionTranslator
 	private PhysicalNamingStrategy physicalNamingStrategy;
 
 	private Object jtaTransactionManager;
+
+	private MultiTenantConnectionProvider multiTenantConnectionProvider;
 
 	private CurrentTenantIdentifierResolver currentTenantIdentifierResolver;
 
@@ -239,6 +242,15 @@ public class LocalSessionFactoryBean extends HibernateExceptionTranslator
 	}
 
 	/**
+	 * Set a {@link MultiTenantConnectionProvider} to be passed on to the SessionFactory.
+	 * @since 4.3
+	 * @see LocalSessionFactoryBuilder#setMultiTenantConnectionProvider
+	 */
+	public void setMultiTenantConnectionProvider(MultiTenantConnectionProvider multiTenantConnectionProvider) {
+		this.multiTenantConnectionProvider = multiTenantConnectionProvider;
+	}
+
+	/**
 	 * Set a {@link CurrentTenantIdentifierResolver} to be passed on to the SessionFactory.
 	 * @see LocalSessionFactoryBuilder#setCurrentTenantIdentifierResolver
 	 */
@@ -251,7 +263,6 @@ public class LocalSessionFactoryBean extends HibernateExceptionTranslator
 	 * <p>Default is to search all specified packages for classes annotated with
 	 * {@code @javax.persistence.Entity}, {@code @javax.persistence.Embeddable}
 	 * or {@code @javax.persistence.MappedSuperclass}.
-	 * @since 4.2
 	 * @see #setPackagesToScan
 	 */
 	public void setEntityTypeFilters(TypeFilter... entityTypeFilters) {
@@ -344,7 +355,11 @@ public class LocalSessionFactoryBean extends HibernateExceptionTranslator
 	 */
 	public MetadataSources getMetadataSources() {
 		if (this.metadataSources == null) {
-			this.metadataSources = new MetadataSources(new BootstrapServiceRegistryBuilder().build());
+			BootstrapServiceRegistryBuilder builder = new BootstrapServiceRegistryBuilder();
+			if (this.resourcePatternResolver != null) {
+				builder = builder.applyClassLoader(this.resourcePatternResolver.getClassLoader());
+			}
+			this.metadataSources = new MetadataSources(builder.build());
 		}
 		return this.metadataSources;
 	}
@@ -438,6 +453,10 @@ public class LocalSessionFactoryBean extends HibernateExceptionTranslator
 
 		if (this.jtaTransactionManager != null) {
 			sfb.setJtaTransactionManager(this.jtaTransactionManager);
+		}
+
+		if (this.multiTenantConnectionProvider != null) {
+			sfb.setMultiTenantConnectionProvider(this.multiTenantConnectionProvider);
 		}
 
 		if (this.currentTenantIdentifierResolver != null) {

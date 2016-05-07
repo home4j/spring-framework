@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 the original author or authors.
+ * Copyright 2002-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -235,6 +235,53 @@ public class SpelCompilationCoverageTests extends AbstractExpressionTests {
 		assertEquals(true,expression.getValue(root));
 	}
 
+	@Test
+	public void operatorInstanceOf_SPR14250() throws Exception {
+		// primitive left operand - should get boxed, return true
+		expression = parse("3 instanceof T(Integer)");
+		assertEquals(true,expression.getValue());
+		assertCanCompile(expression);
+		assertEquals(true,expression.getValue());
+
+		// primitive left operand - should get boxed, return false
+		expression = parse("3 instanceof T(String)");
+		assertEquals(false,expression.getValue());
+		assertCanCompile(expression);
+		assertEquals(false,expression.getValue());
+		
+		// double slot left operand - should get boxed, return false
+		expression = parse("3.0d instanceof T(Integer)");
+		assertEquals(false,expression.getValue());
+		assertCanCompile(expression);
+		assertEquals(false,expression.getValue());
+
+		// double slot left operand - should get boxed, return true
+		expression = parse("3.0d instanceof T(Double)");
+		assertEquals(true,expression.getValue());
+		assertCanCompile(expression);
+		assertEquals(true,expression.getValue());
+		
+		// Only when the right hand operand is a direct type reference
+		// will it be compilable.
+		StandardEvaluationContext ctx = new StandardEvaluationContext();
+		ctx.setVariable("foo", String.class);
+		expression = parse("3 instanceof #foo");
+		assertEquals(false,expression.getValue(ctx));
+		assertCantCompile(expression);
+
+		// use of primitive as type for instanceof check - compilable
+		// but always false
+		expression = parse("3 instanceof T(int)");
+		assertEquals(false,expression.getValue());
+		assertCanCompile(expression);
+		assertEquals(false,expression.getValue());
+		
+		expression = parse("3 instanceof T(long)");
+		assertEquals(false,expression.getValue());
+		assertCanCompile(expression);
+		assertEquals(false,expression.getValue());
+	}
+	
 	@Test
 	public void stringLiteral() throws Exception {
 		expression = parser.parseExpression("'abcde'");
@@ -3000,11 +3047,11 @@ public class SpelCompilationCoverageTests extends AbstractExpressionTests {
 		assertEquals("java.lang.String",expression.getValue());
 		assertCanCompile(expression);
 		assertEquals("java.lang.String",expression.getValue());
-		
+	
 		// These tests below verify that the chain of static accesses (either method/property or field)
 		// leave the right thing on top of the stack for processing by any outer consuming code.
 		// Here the consuming code is the String.valueOf() function.  If the wrong thing were on
-		// the stack (for example if the compiled code for static methods wasn't popping the 
+		// the stack (for example if the compiled code for static methods wasn't popping the
 		// previous thing off the stack) the valueOf() would operate on the wrong value.
 
 		String shclass = StaticsHelper.class.getName();
@@ -3042,7 +3089,7 @@ public class SpelCompilationCoverageTests extends AbstractExpressionTests {
 		assertEquals("fb",expression.getValue(StaticsHelper.sh));
 		assertCanCompile(expression);
 		assertEquals("fb",expression.getValue(StaticsHelper.sh));
-		
+	
 		expression = parser.parseExpression("T(String).valueOf(propertya.propertyb)");
 		assertEquals("pb",expression.getValue(StaticsHelper.sh));
 		assertCanCompile(expression);
@@ -3052,9 +3099,9 @@ public class SpelCompilationCoverageTests extends AbstractExpressionTests {
 		assertEquals("mb",expression.getValue(StaticsHelper.sh));
 		assertCanCompile(expression);
 		assertEquals("mb",expression.getValue(StaticsHelper.sh));
-		
-	}
 	
+	}
+
 	@Test
 	public void constructorReference_SPR12326() {
 		String type = this.getClass().getName();
@@ -4267,7 +4314,7 @@ public class SpelCompilationCoverageTests extends AbstractExpressionTests {
 
 //		// time it interpreted
 //		long stime = System.currentTimeMillis();
-//		for (int i=0;i<100000;i++) {
+//		for (int i = 0;i<100000;i++) {
 //			v = expression.getValue(ctx,holder);
 //		}
 //		System.out.println((System.currentTimeMillis()-stime));
@@ -4278,7 +4325,7 @@ public class SpelCompilationCoverageTests extends AbstractExpressionTests {
 //
 //		// time it compiled
 //		stime = System.currentTimeMillis();
-//		for (int i=0;i<100000;i++) {
+//		for (int i = 0;i<100000;i++) {
 //			v = expression.getValue(ctx,holder);
 //		}
 //		System.out.println((System.currentTimeMillis()-stime));
@@ -5014,7 +5061,7 @@ public class SpelCompilationCoverageTests extends AbstractExpressionTests {
 
 		public void reset() {
 			i = 0;
-			_i=0;
+			_i = 0;
 			s = null;
 			_s = null;
 			field = null;
@@ -5446,7 +5493,7 @@ public class SpelCompilationCoverageTests extends AbstractExpressionTests {
 		public static String methodb() {
 			return "mb";
 		}
-		
+	
 		public static StaticsHelper getPropertya() {
 			return sh;
 		}
@@ -5454,11 +5501,11 @@ public class SpelCompilationCoverageTests extends AbstractExpressionTests {
 		public static String getPropertyb() {
 			return "pb";
 		}
-		
+	
 
 		public static StaticsHelper fielda = sh;
 		public static String fieldb = "fb";
-		
+	
 		public String toString() {
 			return "sh";
 		}

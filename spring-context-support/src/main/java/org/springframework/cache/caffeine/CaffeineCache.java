@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2015 the original author or authors.
+ * Copyright 2002-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import org.springframework.util.Assert;
  * Spring {@link org.springframework.cache.Cache} adapter implementation
  * on top of a Caffeine {@link com.github.benmanes.caffeine.cache.Cache} instance.
  *
- * <p>Requires Caffeine 2.0 or higher.
+ * <p>Requires Caffeine 2.1 or higher.
  *
  * @author Ben Manes
  * @author Juergen Hoeller
@@ -64,6 +64,7 @@ public class CaffeineCache extends AbstractValueAdaptingCache {
 	 */
 	public CaffeineCache(String name, com.github.benmanes.caffeine.cache.Cache<Object, Object> cache,
 			boolean allowNullValues) {
+
 		super(allowNullValues);
 		Assert.notNull(name, "Name must not be null");
 		Assert.notNull(cache, "Cache must not be null");
@@ -141,6 +142,7 @@ public class CaffeineCache extends AbstractValueAdaptingCache {
 			return toStoreValue(this.value);
 		}
 	}
+
 
 	private class LoadFunction implements Function<Object, Object> {
 
